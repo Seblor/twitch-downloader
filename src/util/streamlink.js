@@ -9,7 +9,9 @@ import { https } from 'follow-redirects'
 const STORAGE_KEY_STREAMLINK_VERSION = 'TwitchDownloader-streamlinkVersion'
 const binFolderLocation = process.env.NODE_ENV === 'development' ? './bin' : './resources/bin'
 const lockFilePath = path.join(binFolderLocation, 'download-process.lock')
-fs.mkdirSync(binFolderLocation)
+if (!fs.existsSync(binFolderLocation)) {
+  fs.mkdirSync(binFolderLocation)
+}
 
 async function fetchLastStreamlinkAsset () {
   const { assets, tag_name: version } = await fetch('https://api.github.com/repos/beardypig/streamlink-portable/releases/latest').then(res => res.json())

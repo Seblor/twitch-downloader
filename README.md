@@ -1,24 +1,13 @@
-# twitch_downloader
+# Twitch Downloader
 
-## Project setup
-```
-npm install
-```
+## About this project
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+I just don't really like twitch's interface. It's slow to load, and scrubbing is terrible. So I made this app to automatically download live streams from twitch. This allows the user to watch streams using any video player (like VLC), go back to watch something again, and also saves the video for watching later.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Installation
 
-### Lints and fixes files
-```
-npm run lint
-```
+Go to the [last release page](./releases/latest), then download and run the setup file corresponding to your operating system. For now, only Windows is available.
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Screenshot
+
+![screenshot](./screenshots/shot1.png)

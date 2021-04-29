@@ -6,7 +6,7 @@ I just don't really like twitch's interface. It's slow to load, and scrubbing is
 
 ## Installation
 
-Go to the [last release page](./releases/latest), then download and run the setup file corresponding to your operating system. For now, only Windows is available.
+Go to the [last release page](https://github.com/Seblor/twitch-downloader/releases/latest), then download and run the setup file corresponding to your operating system. For now, only Windows is available.
 
 ## Screenshot
 

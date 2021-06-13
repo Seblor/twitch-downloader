@@ -161,7 +161,7 @@ export async function downloadStream (streamer, location) {
 
 function getTimestamp () {
   const d = new Date()
-  return `${d.getFullYear()}-${formatNum(d.getMonth())}-${formatNum(d.getDay())} ${formatNum(d.getHours())}_${formatNum(d.getMinutes())}_${formatNum(d.getSeconds())}`
+  return `${d.getFullYear()}-${formatNum(d.getMonth() + 1)}-${formatNum(d.getDate())} ${formatNum(d.getHours())}_${formatNum(d.getMinutes())}_${formatNum(d.getSeconds())}`
 }
 
 function formatNum (num) {

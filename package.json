@@ -1,7 +1,7 @@
 {
   "name": "twitch_downloader",
   "productName": "Twitch Downloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "",
   "author": "",
@@ -52,10 +52,10 @@
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
     "vue-cli-plugin-bootstrap-vue": "^0.7.0",
-    "vue-cli-plugin-electron-builder": "^2.0.0-rc.6",
+    "vue-cli-plugin-electron-builder": "^2.0.0",
     "vue-template-compiler": "^2.6.11"
   },
-  "_id": "twitch_downloader@1.0.0",
+  "_id": "twitch_downloader@1.0.1",
   "keywords": [],
   "license": "ISC",
   "readme": "ERROR: No README data found!"

@@ -1,20 +1,22 @@
 import path from 'path'
 import fs from 'fs'
 import { spawn } from 'child_process'
+import extract from 'extract-zip'
 import SemVer from 'semver'
+import os from 'os'
 import { https } from 'follow-redirects'
 
 const STORAGE_KEY_STREAMLINK_VERSION = 'TwitchDownloader-streamlinkVersion'
+const STORAGE_KEY_STREAMLINK_INSTALL = 'TwitchDownloader-streamlinkInstall'
 const binFolderLocation = process.env.NODE_ENV === 'development' ? './bin' : './resources/bin'
-const lockFilePath = path.join(binFolderLocation, 'download-process.lock')
 if (!fs.existsSync(binFolderLocation)) {
   fs.mkdirSync(binFolderLocation)
 }
 
 async function fetchLastStreamlinkAsset () {
-  const { assets, tag_name: version } = await fetch('https://api.github.com/repos/streamlink/streamlink/releases/latest').then(res => res.json())
+  const { assets, tag_name: version } = await fetch('https://api.github.com/repos/beardypig/streamlink-portable/releases/52245816').then(res => res.json()) // Enforcing v2.4.0 since 3.X does not work
   return {
-    asset: assets.find(asset => asset.name.includes('.exe')),
+    asset: assets.find(asset => asset.name.includes(os.platform()) && asset.name.includes('py3.7')),
     version
   }
 }
@@ -30,7 +32,7 @@ export async function updateStreamlink (stateChangeCallback) {
 
   const assetFilePath = path.join(binFolderLocation, assetName)
   const file = fs.createWriteStream(assetFilePath)
-  fs.closeSync(fs.openSync(lockFilePath, 'w'))
+  localStorage.setItem(STORAGE_KEY_STREAMLINK_INSTALL, '')
 
   return new Promise(resolve => {
     https.get(asset.browser_download_url, (response) => {
@@ -47,14 +49,30 @@ export async function updateStreamlink (stateChangeCallback) {
       response.pipe(file).on('close', () => {
         if (typeof stateChangeCallback === 'function') {
           stateChangeCallback({
-            step: 'Cleaning up...',
+            step: 'Extracting Streamlink...',
             process: ''
           })
         }
-        fs.unlink(assetFilePath, (err) => { if (err) console.error(err) })
-        fs.unlink(lockFilePath, (err) => { if (err) console.error(err) })
-        localStorage.setItem(STORAGE_KEY_STREAMLINK_VERSION, version)
-        resolve()
+
+        // Extracting the archive
+        extract(assetFilePath, {
+          dir: path.resolve(binFolderLocation),
+          onEntry: (entry) => {
+            if (typeof stateChangeCallback === 'function') {
+              stateChangeCallback({
+                step: 'Extracting',
+                process: entry.fileName
+              })
+            }
+          }
+        }, (err) => {
+          if (err) console.error(err)
+        }).then(() => {
+          fs.unlink(assetFilePath, (err) => { if (err) console.error(err) })
+          localStorage.removeItem(STORAGE_KEY_STREAMLINK_INSTALL)
+          localStorage.setItem(STORAGE_KEY_STREAMLINK_VERSION, version)
+          resolve()
+        })
       })
     })
   })
@@ -66,7 +84,7 @@ export async function updateStreamlink (stateChangeCallback) {
  */
 export async function checkStreamlinkVersion () {
   const installedVersion = localStorage.getItem(STORAGE_KEY_STREAMLINK_VERSION)
-  if (!installedVersion || fs.existsSync(lockFilePath)) {
+  if (!installedVersion || localStorage.getItem(STORAGE_KEY_STREAMLINK_INSTALL) !== null) {
     return true
   }
   const { asset, version } = await fetchLastStreamlinkAsset()

@@ -1,9 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { spawn } from 'child_process'
-import extract from 'extract-zip'
 import SemVer from 'semver'
-import os from 'os'
 import { https } from 'follow-redirects'
 
 const STORAGE_KEY_STREAMLINK_VERSION = 'TwitchDownloader-streamlinkVersion'
@@ -14,9 +12,9 @@ if (!fs.existsSync(binFolderLocation)) {
 }
 
 async function fetchLastStreamlinkAsset () {
-  const { assets, tag_name: version } = await fetch('https://api.github.com/repos/beardypig/streamlink-portable/releases/latest').then(res => res.json())
+  const { assets, tag_name: version } = await fetch('https://api.github.com/repos/streamlink/streamlink/releases/latest').then(res => res.json())
   return {
-    asset: assets.find(asset => asset.name.includes(os.platform())),
+    asset: assets.find(asset => asset.name.includes('.exe')),
     version
   }
 }
@@ -49,30 +47,14 @@ export async function updateStreamlink (stateChangeCallback) {
       response.pipe(file).on('close', () => {
         if (typeof stateChangeCallback === 'function') {
           stateChangeCallback({
-            step: 'Extracting Streamlink...',
+            step: 'Cleaning up...',
             process: ''
           })
         }
-
-        // Extracting the archive
-        extract(assetFilePath, {
-          dir: path.resolve(binFolderLocation),
-          onEntry: (entry) => {
-            if (typeof stateChangeCallback === 'function') {
-              stateChangeCallback({
-                step: 'Extracting',
-                process: entry.fileName
-              })
-            }
-          }
-        }, (err) => {
-          if (err) console.error(err)
-        }).then(() => {
-          fs.unlink(assetFilePath, (err) => { if (err) console.error(err) })
-          fs.unlink(lockFilePath, (err) => { if (err) console.error(err) })
-          localStorage.setItem(STORAGE_KEY_STREAMLINK_VERSION, version)
-          resolve()
-        })
+        fs.unlink(assetFilePath, (err) => { if (err) console.error(err) })
+        fs.unlink(lockFilePath, (err) => { if (err) console.error(err) })
+        localStorage.setItem(STORAGE_KEY_STREAMLINK_VERSION, version)
+        resolve()
       })
     })
   })

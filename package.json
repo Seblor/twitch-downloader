@@ -1,7 +1,7 @@
 {
   "name": "twitch_downloader",
   "productName": "Twitch Downloader",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "",
   "author": "",
@@ -58,5 +58,9 @@
   "_id": "twitch_downloader@1.0.1",
   "keywords": [],
   "license": "ISC",
-  "readme": "ERROR: No README data found!"
+  "readme": "ERROR: No README data found!",
+  "engines": {
+    "node": ">=15 <16"
+  },
+  "engineStrict": true
 }
